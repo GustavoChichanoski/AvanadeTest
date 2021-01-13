@@ -25,7 +25,7 @@ namespace Vaquinha.Unit.Tests.DomainTests
         public void Doacao_CorretamentePreenchidos_DoacaoValida()
         {
             // Arrange
-            var doacao = _doacaoFixture.DoacaoValida(valor: 5,aceitaTaxa: true);
+            var doacao = _doacaoFixture.DoacaoValida();
             doacao.AdicionarEnderecoCobranca(_enderecoFixture.EnderecoValido());
             doacao.AdicionarFormaPagamento(_cartaoCreditoFixture.CartaoCreditoValido());
 
@@ -42,7 +42,7 @@ namespace Vaquinha.Unit.Tests.DomainTests
         public void Doacao_UsuarioAceitaPagarComTaxa_DoacaoValida()
         {
             // Arrange
-            var doacao = _doacaoFixture.DoacaoValida();
+            var doacao = _doacaoFixture.DoacaoValida(valor: 5,aceitaTaxa: true);
             doacao.AdicionarEnderecoCobranca(_enderecoFixture.EnderecoValido());
             doacao.AdicionarFormaPagamento(_cartaoCreditoFixture.CartaoCreditoValido());
 
@@ -50,9 +50,7 @@ namespace Vaquinha.Unit.Tests.DomainTests
             var valido = doacao.Valido();
 
             // Assert
-            valido.Should().BeTrue(because: "os campos foram preenchidos corretamente");
             doacao.Valor.Should().Be(6, because: "valor com taxa de 20%");
-            doacao.ErrorMessages.Should().BeEmpty();
         }
 
         [Fact]
