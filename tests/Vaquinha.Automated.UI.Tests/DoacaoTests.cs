@@ -7,59 +7,90 @@ using Xunit;
 
 namespace Vaquinha.AutomatedUITests
 {
-	public class DoacaoTests : IDisposable, IClassFixture<DoacaoFixture>, 
-                                               IClassFixture<EnderecoFixture>, 
+    public class DoacaoTests : IDisposable, IClassFixture<DoacaoFixture>,
+                                               IClassFixture<EnderecoFixture>,
                                                IClassFixture<CartaoCreditoFixture>
-	{
-		private DriverFactory _driverFactory = new DriverFactory();
-		private IWebDriver _driver;
+    {
+        private DriverFactory _driverFactory = new DriverFactory();
+        private IWebDriver _driver;
 
-		private readonly DoacaoFixture _doacaoFixture;
-		private readonly EnderecoFixture _enderecoFixture;
-		private readonly CartaoCreditoFixture _cartaoCreditoFixture;
+        private readonly DoacaoFixture _doacaoFixture;
+        private readonly EnderecoFixture _enderecoFixture;
+        private readonly CartaoCreditoFixture _cartaoCreditoFixture;
 
-		public DoacaoTests(DoacaoFixture doacaoFixture, EnderecoFixture enderecoFixture, CartaoCreditoFixture cartaoCreditoFixture)
+        public DoacaoTests(DoacaoFixture doacaoFixture, EnderecoFixture enderecoFixture, CartaoCreditoFixture cartaoCreditoFixture)
         {
             _doacaoFixture = doacaoFixture;
             _enderecoFixture = enderecoFixture;
             _cartaoCreditoFixture = cartaoCreditoFixture;
         }
-		public void Dispose()
-		{
-			_driverFactory.Close();
-		}
+        public void Dispose()
+        {
+            _driverFactory.Close();
+        }
 
-		[Fact]
-		public void DoacaoUI_AcessoTelaHome()
-		{
-			// Arrange
-			_driverFactory.NavigateToUrl("https://vaquinha.azurewebsites.net/");
-			_driver = _driverFactory.GetWebDriver();
+        [Fact]
+        [Trait("Doacao","Doacao_CorretamentePreenchidos_DoacaoValida")]
+        public void Doacao_CorretamentePreenchidos_DoacaoValida()
+        {
+            //Arrange
+            var doacao = _doacaoFixture.DoacaoValida();
+            doacao.AdicionarEnderecoCobranca(
+                _enderecoFixture.EnderecoValido()
+            );
+            doacao.AdicionarFormaPagamento(
+                _cartaoCreditoFixture.CartaoCreditoValido()
+            );
 
-			// Act
-			IWebElement webElement = null;
-			webElement = _driver.FindElement(By.ClassName("vaquinha-logo"));
+            // Act
+            
+            var valido = doacao.Valido();
 
-			// Assert
-			webElement.Displayed.Should().BeTrue(because:"logo exibido");
-		}
-		[Fact]
-		public void DoacaoUI_CriacaoDoacao()
-		{
-			//Arrange
-			var doacao = _doacaoFixture.DoacaoValida();
+            // Assert
+            valido.Should().BeTrue(
+                because: "Os campos foram preenchidos corretamente"
+            );
+            doacao.ErrorMessages.Should().BeEmpty();
+
+        //When
+        
+        //Then
+        }
+
+        [Fact]
+        public void DoacaoUI_AcessoTelaHome()
+        {
+            // Arrange
+            _driverFactory.NavigateToUrl("https://vaquinha.azurewebsites.net/");
+            _driver = _driverFactory.GetWebDriver();
+
+            // Act
+            IWebElement webElement = null;
+            webElement = _driver.FindElement(By.ClassName("vaquinha-logo"));
+
+            // Assert
+            webElement.Displayed.Should().BeTrue(because: "logo exibido");
+        }
+        [Fact]
+        public void DoacaoUI_CriacaoDoacao()
+        {
+            //Arrange
+            var doacao = _doacaoFixture.DoacaoValida();
             doacao.AdicionarEnderecoCobranca(_enderecoFixture.EnderecoValido());
             doacao.AdicionarFormaPagamento(_cartaoCreditoFixture.CartaoCreditoValido());
-			_driverFactory.NavigateToUrl("https://vaquinha.azurewebsites.net/");
-			_driver = _driverFactory.GetWebDriver();
+            _driverFactory.NavigateToUrl("https://vaquinha.azurewebsites.net/");
+            _driver = _driverFactory.GetWebDriver();
 
-			//Act
-			IWebElement webElement = null;
-			webElement = _driver.FindElement(By.ClassName("btn-yellow"));
-			webElement.Click();
+            //Act
+            IWebElement webElement = null;
+            webElement = _driver.FindElement(By.ClassName("btn-yellow"));
+            webElement.Click();
 
-			//Assert
-			_driver.Url.Should().Contain("/Doacoes/Create");
-		}
-	}
+            IWebElement campoNome = _driver.FindElement(By.Id("DadosPessoais_Nome"));
+            campoNome.SendKeys(doacao.DadosPessoais.Nome);
+
+            //Assert
+            _driver.Url.Should().Contain("/Doacoes/Create");
+        }
+    }
 }

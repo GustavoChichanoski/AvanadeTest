@@ -6,20 +6,20 @@ using OpenQA.Selenium.Firefox;
 
 namespace Vaquinha.AutomatedUITests
 {
-	public class DriverFactory
+    public class DriverFactory
     {
         private IWebDriver _driver;
 
-        // Construtor da classe. 
+        // Construtor da classe.
         public DriverFactory()
         {
             // Inicializa o browser utilizando o ChromeDriver que está no caminho /usr/share/applications/
-            //ChromeDriverService service = ChromeDriverService.CreateDefaultService("/usr/share/applications/");
-            FirefoxDriverService service = FirefoxDriverService.CreateDefaultService("/usr/share/applications/");
-            
+            //ChromeDriverService service = ChromeDriverService.CreateDefaultService("/usr/share/applications/");   
+            FirefoxDriverService service = FirefoxDriverService.CreateDefaultService("C:/Program Files/Mozilla Firefox");
+
             // Faz criação de porta para abrir o browser.
-            service.Port = new Random().Next(64000, 64800);
-            
+            service.Port = 4444;
+
             /*ChromeOptions options = new ChromeOptions();
             options.AddArgument("headless");
             options.AddArgument("no-sandbox");
@@ -40,16 +40,16 @@ namespace Vaquinha.AutomatedUITests
             profile.AcceptUntrustedCertificates = true;
             profile.AssumeUntrustedCertificateIssuer = false;
             options.Profile = profile;
-            
+
             _driver = new FirefoxDriver(service, options);
-            
+
             _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
             _driver.Manage().Window.Maximize();
         }
 
         // Navega para determinada URL
         public void NavigateToUrl(String url)
-        {            
+        {
             _driver.Navigate().GoToUrl(url);
         }
 

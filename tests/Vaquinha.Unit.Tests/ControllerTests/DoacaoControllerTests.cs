@@ -20,7 +20,7 @@ namespace Vaquinha.Unit.Tests.ControllerTests
                                         IClassFixture<EnderecoFixture>,
                                         IClassFixture<CartaoCreditoFixture>
     {
-        private readonly Mock<IDoacaoRepository> _doacaoRepository = new Mock<IDoacaoRepository>();        
+        private readonly Mock<IDoacaoRepository> _doacaoRepository = new Mock<IDoacaoRepository>();
         private readonly Mock<GloballAppConfig> _globallAppConfig = new Mock<GloballAppConfig>();
 
         private readonly DoacaoFixture _doacaoFixture;
@@ -41,7 +41,9 @@ namespace Vaquinha.Unit.Tests.ControllerTests
         private readonly Doacao _doacaoValida;
         private readonly DoacaoViewModel _doacaoModelValida;
 
-        public DoacaoControllerTests(DoacaoFixture doacaoFixture, EnderecoFixture enderecoFixture, CartaoCreditoFixture cartaoCreditoFixture)
+        public DoacaoControllerTests(DoacaoFixture doacaoFixture,
+                                     EnderecoFixture enderecoFixture,
+                                     CartaoCreditoFixture cartaoCreditoFixture)
         {
             _doacaoFixture = doacaoFixture;
             _enderecoFixture = enderecoFixture;
